@@ -224,6 +224,7 @@ def main():
     tracker = create_tracker(args, args.output_dir)
 
     # Handle draft model config
+    # TODO: init draft with yarn
     if args.draft_model_config is None:
         # Auto-generate and save config file
         auto_config_path = create_draft_config_from_target(
@@ -290,6 +291,7 @@ def main():
     print_with_rank("Initialized target model")
 
     # load model with resume
+    # TODO: load yarn checkpoint
     if draft_model_last_checkpoint:
         draft_model = AutoEagle3DraftModel.from_pretrained(
             draft_model_last_checkpoint,
@@ -318,6 +320,7 @@ def main():
         processor = None
 
     # convert to dataloader
+    # TODO: change datasets (PG-19)
     cache_params_string = (
         f"{args.train_data_path}-"
         f"{args.max_length}-"
