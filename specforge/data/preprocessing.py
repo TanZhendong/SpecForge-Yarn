@@ -157,6 +157,10 @@ def preprocess_conversations(
         input_ids, loss_mask = parser.parse(
             source, max_length, preformatted=is_preformatted, **kwargs_item
         )
+        if is_preformatted:
+            # use text, no chat
+            # FIXME: need to compatible with conversational and non-conversational data.
+            loss_mask = torch.ones_like(input_ids)
         results["input_ids"].append(input_ids[None, :])
         results["loss_mask"].append(loss_mask[None, :])
         results["attention_mask"].append(torch.ones_like(loss_mask)[None, :])

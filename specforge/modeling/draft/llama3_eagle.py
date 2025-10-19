@@ -456,8 +456,8 @@ class LlamaAttention(nn.Module):
             )
         else:
             scaling_type = self.config.rope_scaling["rope_type"]
-            if hasattr(self.config.rope_scaling, "factor"):
-                scaling_factor = self.config.rope_scaling["factor"]
+            # if hasattr(self.config.rope_scaling, "factor"):
+            scaling_factor = self.config.rope_scaling["factor"]
             if scaling_type == "linear":
                 self.rotary_emb = LlamaLinearScalingRotaryEmbedding(
                     self.head_dim,

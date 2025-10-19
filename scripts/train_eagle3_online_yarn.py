@@ -318,6 +318,7 @@ def main():
         processor = None
 
     # convert to dataloader
+    # TODO: change datasets (PG-19)
     cache_params_string = (
         f"{args.train_data_path}-"
         f"{args.max_length}-"
@@ -339,13 +340,14 @@ def main():
             processor=processor,
             num_proc=args.build_dataset_num_proc,
         )
-        vocab_mapping_path = generate_vocab_mapping_file(
-            dataset=train_eagle3_dataset,
-            target_vocab_size=draft_model_config.vocab_size,
-            draft_vocab_size=draft_model_config.draft_vocab_size,
-            cache_dir=os.path.join(args.cache_dir, "vocab_mapping"),
-            cache_key=cache_key,
-        )
+        if not draft_model_last_checkpoint:
+            vocab_mapping_path = generate_vocab_mapping_file(
+                dataset=train_eagle3_dataset,
+                target_vocab_size=draft_model_config.vocab_size,
+                draft_vocab_size=draft_model_config.draft_vocab_size,
+                cache_dir=os.path.join(args.cache_dir, "vocab_mapping"),
+                cache_key=cache_key,
+            )
     train_dataloader = prepare_dp_dataloaders(
         train_eagle3_dataset,
         args.draft_micro_batch_size,
@@ -369,8 +371,9 @@ def main():
         print_with_rank(f"Using provided total_steps: {args.total_steps}")
 
     # we load the vocab mapping then
-    draft_model.load_vocab_mapping(vocab_mapping_path)
-    print_with_rank("Loaded vocab mapping")
+    if not draft_model_last_checkpoint:
+        draft_model.load_vocab_mapping(vocab_mapping_path)
+        print_with_rank("Loaded vocab mapping")
 
     if args.eval_data_path is not None:
         eval_dataset = load_dataset("json", data_files=args.eval_data_path)["train"]
