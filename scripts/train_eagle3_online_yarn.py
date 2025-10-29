@@ -291,6 +291,7 @@ def main():
 
     # load model with resume
     if draft_model_last_checkpoint:
+        print("load checkpoint from", draft_model_last_checkpoint)
         draft_model = AutoEagle3DraftModel.from_pretrained(
             draft_model_last_checkpoint,
             attention_backend=args.attention_backend,
